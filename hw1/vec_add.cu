@@ -43,7 +43,17 @@ int main() {
     dim3 blockSize(16, 16); // Starting with a default block size of (16, 16)
     dim3 gridSize((N + blockSize.x - 1) / blockSize.x, (N + blockSize.y - 1) / blockSize.y);
 
+    // Start timing
+    clock_t start = clock();
+
+    // Launch kernel
     matrixAdd<<<gridSize, blockSize>>>(d_a, d_b, d_c, N);
+
+    // Stop timing
+    clock_t end = clock();
+
+    // Calculate elapsed time in milliseconds
+    double elapsed_time = double(end - start) / CLOCKS_PER_SEC * 1000.0;
 
     // Copy result back to host
     cudaMemcpy(c, d_c, size, cudaMemcpyDeviceToHost);
@@ -52,10 +62,10 @@ int main() {
     cudaFree(d_a);
     cudaFree(d_b);
     cudaFree(d_c);
-	
-    for(int i=0;i<N;i++){
-	printf("%f ",c[i]);
-    }
+
+    // Print execution time
+    std::cout << "Execution time: " << elapsed_time << " milliseconds" << std::endl;
+
     // Free host memory
     free(a);
     free(b);
@@ -63,5 +73,3 @@ int main() {
 
     return 0;
 }
-
-
