@@ -1,75 +1,95 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <curand_kernel.h>
+#include <cuda_runtime.h>
+using namespace std ;
+#define N 6400
+int sz = N*N;
 
-#define N 80
 
-__global__ void matrixAdd(float *a, float *b, float *c, int n) {
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-    int j = blockIdx.y * blockDim.y + threadIdx.y;
-    int index = i * n + j;
-    if (i < n && j < n) {
-        c[index] = a[index] + b[index];
+// CUDA kernel for matrix addition
+__global__ void matrixAddition(float **a, float **b, float **result, int rows, int cols) {
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if (row < rows && col < cols) {
+        result[row][col] = a[row][col] + b[row][col];
     }
+    __syncthreads();
 }
 
-int main() {
-    float *a, *b, *c; // Matrices
-    float *d_a, *d_b, *d_c; // Device copies of matrices
 
-    int size = N * N * sizeof(float);
+void execute(int block_size){
+    // Matrix dimensions
+    int rows = 6400;
+    int cols = 6400;
 
-    // Allocate memory for matrices on host
-    a = (float *)malloc(size);
-    b = (float *)malloc(size);
-    c = (float *)malloc(size);
 
-    // Initialize matrices with random numbers
+    float **h_a = new float*[rows];
+    float **h_b = new float*[rows];
+    float **h_result = new float*[rows];
+
     srand(time(NULL));
-    for (int i = 0; i < N * N; ++i) {
-        a[i] = static_cast<float>(rand()) / RAND_MAX;
-        b[i] = static_cast<float>(rand()) / RAND_MAX;
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            h_a[i][j] = static_cast<float>(rand()) / RAND_MAX;
+            h_b[i][j] = static_cast<float>(rand()) / RAND_MAX;
+        }
     }
 
-    // Allocate memory for device copies of matrices
-    cudaMalloc(&d_a, size);
-    cudaMalloc(&d_b, size);
-    cudaMalloc(&d_c, size);
+    float **d_a, **d_b, **d_result;
+    cudaMalloc(&d_a, sz   * sizeof(float ));
+    cudaMalloc(&d_b, sz   * sizeof(float ));
+    cudaMalloc(&d_result, sz   * sizeof(float ));
 
-    // Copy matrices from host to device
-    cudaMemcpy(d_a, a, size, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_b, b, size, cudaMemcpyHostToDevice);
 
-    dim3 blockSize(16, 16); // Starting with a default block size of (16, 16)
-    dim3 gridSize((N + blockSize.x - 1) / blockSize.x, (N + blockSize.y - 1) / blockSize.y);
+    cudaMemcpy(d_a, h_a, sz   * sizeof(float ), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_b, h_b, sz   * sizeof(float ), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_result, h_result, sz   * sizeof(float ), cudaMemcpyHostToDevice);
 
-    // Start timing
-    clock_t start = clock();
 
-    // Launch kernel
-    matrixAdd<<<gridSize, blockSize>>>(d_a, d_b, d_c, N);
+    // CUDA events for timing
+    clock_t start, stop;
+    start = clock();
 
-    // Stop timing
-    clock_t end = clock();
 
-    // Calculate elapsed time in milliseconds
-    double elapsed_time = double(end - start) / CLOCKS_PER_SEC * 1000.0;
+    // Launch kernel for matrix addition and measure time
+    dim3 threadsPerBlock(block_size,block_size);
+    dim3 numBlocks((cols + threadsPerBlock.x - 1) / threadsPerBlock.x,
+                   (rows + threadsPerBlock.y - 1) / threadsPerBlock.y);
+    matrixAddition<<<numBlocks, threadsPerBlock>>>(d_a, d_b, d_result, rows, cols);
+    
+
+    stop = clock();
+    double timer_seconds = ((double)(stop - start)) / CLOCKS_PER_SEC;
+    cout << "took " << timer_seconds << " seconds.\n";
+    // Synchronize events and calculate elapsed time
 
     // Copy result back to host
-    cudaMemcpy(c, d_c, size, cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_result, d_result, sz   * sizeof(float ), cudaMemcpyDeviceToHost);
 
-    // Free device memory
+
+    // FNee device memory
     cudaFree(d_a);
     cudaFree(d_b);
-    cudaFree(d_c);
-
-    // Print execution time
-    std::cout << "Execution time: " << elapsed_time << " milliseconds" << std::endl;
+    cudaFree(d_result);
 
     // Free host memory
-    free(a);
-    free(b);
-    free(c);
+    for (int i = 0; i < rows; ++i) {
+        delete[] h_a[i];
+        delete[] h_b[i];
+        delete[] h_result[i];
+    }
+    delete[] h_a;
+    delete[] h_b;
+    delete[] h_result;
+    return ;
 
-    return 0;
+}
+
+int main(){
+	int a[]={4,8,10,16,20,32};
+	for(int i=0;i<6;i++){execute(a[i]);cout << "yes" ;}
+
 }
