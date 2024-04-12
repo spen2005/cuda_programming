@@ -27,15 +27,15 @@ __global__ void VecMin(const float* A, float* C, int N)
     int i = blockDim.x * blockIdx.x + threadIdx.x;
     int cacheIndex = threadIdx.x;
 
-    float temp = A[i];  // register for each thread
+    float temp = abs(A[i]);  // register for each thread
     i += blockDim.x * gridDim.x;  // grid stride loop
     while (i < N) {
-        if(temp > A[i])
-          temp = A[i];
+        if(temp > abs(A[i]))
+          temp = abs(A[i]);
         i += blockDim.x*gridDim.x;  
     }
    
-    cache[cacheIndex] = temp;   // set the cache value 
+    cache[cacheIndex] = abs(temp);   // set the cache value 
 
     __syncthreads();
 
@@ -79,7 +79,7 @@ int main(void)
 
     cudaSetDevice(gid);
     */
-    printf("Vector Dot Product: A.B\n");
+    printf("Vector : A\n");
     int N;
 
     printf("Enter the size of the vectors: ");
@@ -174,10 +174,10 @@ int main(void)
     cudaFree(d_A);
     cudaFree(d_C);
 
-    double h_G=h_C[0];
+    double h_G=abs(h_C[0]);
     for(int i = 1; i < blocksPerGrid; i++) 
-      if(h_G > h_C[i])
-        h_G = h_C[i];
+      if(h_G > abs(h_C[i]))
+        h_G = abs(h_C[i]);
     
 
     // stop the timer
@@ -197,10 +197,10 @@ int main(void)
 
     // to compute the reference solution
 
-    double h_D = h_A[0];       
+    double h_D = abs(h_A[0]);       
     for(int i = 0; i < N; i++) 
-      if(h_D > h_A[i])
-        h_D = h_A[i]; 
+      if(h_D > abs(h_A[i]))
+        h_D = abs(h_A[i]); 
     
     // stop the timer
     cudaEventRecord(stop,0);
