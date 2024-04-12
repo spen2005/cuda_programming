@@ -9,7 +9,8 @@
 // Includes
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <float.h>
+#define max_float 1.0e10
 // Variables
 float* h_A;   // host vectors
 float* h_C;
@@ -27,15 +28,13 @@ __global__ void VecMin(const float* A, float* C, int N)
     int i = blockDim.x * blockIdx.x + threadIdx.x;
     int cacheIndex = threadIdx.x;
 
-    float temp = A[i];  // register for each thread
-    i += blockDim.x * gridDim.x;  // grid stride loop
+    float temp = FLT_MAX;
     while (i < N) {
-        if(temp > A[i])
-          temp = A[i];
+        temp = fminf(temp,fabsf(A[i]));
         i += blockDim.x*gridDim.x;  
     }
    
-    cache[cacheIndex] = temp;   // set the cache value 
+    cache[cacheIndex] = fabsf(temp);   // set the cache value 
 
     __syncthreads();
 
@@ -43,17 +42,16 @@ __global__ void VecMin(const float* A, float* C, int N)
 
     int ib = blockDim.x/2;
     while (ib != 0) {
-      if(cacheIndex < ib)
-        if(cache[cacheIndex] > cache[cacheIndex+ib])
-          cache[cacheIndex] = cache[cacheIndex+ib];
-
+      if(cacheIndex < ib){
+          cache[cacheIndex] = fminf(fabsf(cache[cacheIndex]),fabsf(cache[cacheIndex+ib]));
+      }
       __syncthreads();
 
       ib /=2;
     }
     
     if(cacheIndex == 0)
-      C[blockIdx.x] = cache[0];
+      C[blockIdx.x] = 10.0;
 
 }
 
@@ -79,7 +77,7 @@ int main(void)
 
     cudaSetDevice(gid);
     */
-    printf("Vector Dot Product: A.B\n");
+    printf("Vector : A\n");
     int N;
 
     printf("Enter the size of the vectors: ");
@@ -152,7 +150,7 @@ int main(void)
     cudaEventRecord(start,0);
 
     int sm = threadsPerBlock*sizeof(float);
-    VeciMin <<< blocksPerGrid, threadsPerBlock, sm >>>(d_A, d_C, N);
+    VecMin <<< blocksPerGrid, threadsPerBlock, sm >>>(d_A, d_C, N);
     
     // stop the timer
     cudaEventRecord(stop,0);
@@ -174,11 +172,12 @@ int main(void)
     cudaFree(d_A);
     cudaFree(d_C);
 
-    double h_G=h_C[0];
-    for(int i = 1; i < blocksPerGrid; i++) 
-      if(h_G > h_C[i])
-        h_G = h_C[i];
-    
+    double h_G = max_float;
+    for(int i = 0; i < blocksPerGrid; i++){
+      printf("%20.15e\n",h_C[i]);
+      if(h_G > abs(h_C[i]))
+        h_G = abs(h_C[i]);
+    }
 
     // stop the timer
     cudaEventRecord(stop,0);
@@ -197,11 +196,11 @@ int main(void)
 
     // to compute the reference solution
 
-    double h_D = h_A[0];       
-    for(int i = 0; i < N; i++) 
-      if(h_D > h_A[i])
-        h_D = h_A[i]; 
-    
+    double h_D = max_float;       
+    for(int i = 0; i < N; i++){ 
+      if(h_D > abs(h_A[i]))
+        h_D = abs(h_A[i]); 
+    }
     // stop the timer
     cudaEventRecord(stop,0);
     cudaEventSynchronize(stop);
