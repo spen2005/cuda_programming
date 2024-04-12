@@ -198,6 +198,7 @@ int main(void)
 
     double h_D = max_float       
     for(int i = 0; i < N; i++) 
+      printf("%f\n",h_A[i]);
       if(h_D > abs(h_A[i]))
         h_D = abs(h_A[i]); 
     
