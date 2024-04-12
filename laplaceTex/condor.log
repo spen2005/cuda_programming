@@ -1,0 +1,95 @@
+000 (1005033.000.000) 03/09 13:31:44 Job submitted from host: <192.168.1.254:52171>
+...
+013 (1005033.000.000) 03/09 13:31:47 Job was released.
+	via condor_release (by user condor)
+...
+001 (1005033.000.000) 03/09 13:32:06 Job executing on host: <192.168.1.219:53667>
+...
+Job start: host=twqcd218, JOB_ID=1005033, GPU_ID=0, wdir=/home/cuda2024/twchiu/cuda_lecture/laplaceTex
+005 (1005033.000.000) 03/09 13:32:08 Job terminated.
+	(1) Normal termination (return value 0)
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	0  -  Run Bytes Sent By Job
+	0  -  Run Bytes Received By Job
+	0  -  Total Bytes Sent By Job
+	0  -  Total Bytes Received By Job
+...
+000 (1005034.000.000) 03/09 13:36:08 Job submitted from host: <192.168.1.254:52171>
+...
+013 (1005034.000.000) 03/09 13:36:14 Job was released.
+	via condor_release (by user condor)
+...
+001 (1005034.000.000) 03/09 13:36:30 Job executing on host: <192.168.1.219:53667>
+...
+Job start: host=twqcd218, JOB_ID=1005034, GPU_ID=0, wdir=/home/cuda2024/twchiu/cuda_lecture/laplaceTex
+005 (1005034.000.000) 03/09 13:36:31 Job terminated.
+	(1) Normal termination (return value 0)
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	0  -  Run Bytes Sent By Job
+	0  -  Run Bytes Received By Job
+	0  -  Total Bytes Sent By Job
+	0  -  Total Bytes Received By Job
+...
+000 (1005035.000.000) 03/09 13:39:45 Job submitted from host: <192.168.1.254:52171>
+...
+013 (1005035.000.000) 03/09 13:39:50 Job was released.
+	via condor_release (by user condor)
+...
+001 (1005035.000.000) 03/09 13:39:53 Job executing on host: <192.168.1.219:53667>
+...
+Job start: host=twqcd218, JOB_ID=1005035, GPU_ID=0, wdir=/home/cuda2024/twchiu/cuda_lecture/laplaceTex
+005 (1005035.000.000) 03/09 13:39:54 Job terminated.
+	(1) Normal termination (return value 0)
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	0  -  Run Bytes Sent By Job
+	0  -  Run Bytes Received By Job
+	0  -  Total Bytes Sent By Job
+	0  -  Total Bytes Received By Job
+...
+000 (1005036.000.000) 03/09 13:44:17 Job submitted from host: <192.168.1.254:52171>
+...
+013 (1005036.000.000) 03/09 13:44:18 Job was released.
+	via condor_release (by user condor)
+...
+001 (1005036.000.000) 03/09 13:44:23 Job executing on host: <192.168.1.219:53667>
+...
+Job start: host=twqcd218, JOB_ID=1005036, GPU_ID=0, wdir=/home/cuda2024/twchiu/cuda_lecture/laplaceTex
+005 (1005036.000.000) 03/09 13:44:26 Job terminated.
+	(1) Normal termination (return value 0)
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	0  -  Run Bytes Sent By Job
+	0  -  Run Bytes Received By Job
+	0  -  Total Bytes Sent By Job
+	0  -  Total Bytes Received By Job
+...
+000 (1005037.000.000) 03/09 13:46:52 Job submitted from host: <192.168.1.254:52171>
+...
+013 (1005037.000.000) 03/09 13:46:52 Job was released.
+	via condor_release (by user condor)
+...
+001 (1005037.000.000) 03/09 13:46:58 Job executing on host: <192.168.1.219:53667>
+...
+Job start: host=twqcd218, JOB_ID=1005037, GPU_ID=0, wdir=/home/cuda2024/twchiu/cuda_lecture/laplaceTex
+005 (1005037.000.000) 03/09 13:47:23 Job terminated.
+	(1) Normal termination (return value 0)
+		Usr 0 00:00:12, Sys 0 00:00:01  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:00:12, Sys 0 00:00:01  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	0  -  Run Bytes Sent By Job
+	0  -  Run Bytes Received By Job
+	0  -  Total Bytes Sent By Job
+	0  -  Total Bytes Received By Job
+...
