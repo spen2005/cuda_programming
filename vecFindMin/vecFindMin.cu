@@ -9,7 +9,7 @@
 // Includes
 #include <stdio.h>
 #include <stdlib.h>
-
+#define max_float 1.0e10
 // Variables
 float* h_A;   // host vectors
 float* h_C;
@@ -27,8 +27,7 @@ __global__ void VecMin(const float* A, float* C, int N)
     int i = blockDim.x * blockIdx.x + threadIdx.x;
     int cacheIndex = threadIdx.x;
 
-    float temp = abs(A[i]);  // register for each thread
-    i += blockDim.x * gridDim.x;  // grid stride loop
+    float temp = max_float;
     while (i < N) {
         if(temp > abs(A[i]))
           temp = abs(A[i]);
@@ -174,8 +173,8 @@ int main(void)
     cudaFree(d_A);
     cudaFree(d_C);
 
-    double h_G=abs(h_C[0]);
-    for(int i = 1; i < blocksPerGrid; i++) 
+    double h_G = max_float;
+    for(int i = 0; i < blocksPerGrid; i++) 
       if(h_G > abs(h_C[i]))
         h_G = abs(h_C[i]);
     
@@ -197,7 +196,7 @@ int main(void)
 
     // to compute the reference solution
 
-    double h_D = abs(h_A[0]);       
+    double h_D = max_float       
     for(int i = 0; i < N; i++) 
       if(h_D > abs(h_A[i]))
         h_D = abs(h_A[i]); 
