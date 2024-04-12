@@ -152,7 +152,7 @@ int main(void)
     cudaEventRecord(start,0);
 
     int sm = threadsPerBlock*sizeof(float);
-    VecDot <<< blocksPerGrid, threadsPerBlock, sm >>>(d_A, d_C, N);
+    VecMin <<< blocksPerGrid, threadsPerBlock, sm >>>(d_A, d_C, N);
     
     // stop the timer
     cudaEventRecord(stop,0);
@@ -197,7 +197,7 @@ int main(void)
 
     // to compute the reference solution
 
-    double h_D = A[0];       
+    double h_D = h_A[0];       
     for(int i = 0; i < N; i++) 
       if(h_D > h_A[i])
         h_D = h_A[i]; 

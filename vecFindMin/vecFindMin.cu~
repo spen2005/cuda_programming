@@ -1,4 +1,4 @@
-// Vector Dot Product A.B
+// Vector Find min A
 // compile with the following command:
 //
 //
@@ -12,26 +12,26 @@
 
 // Variables
 float* h_A;   // host vectors
-float* h_B;
 float* h_C;
 float* d_A;   // device vectors
-float* d_B;
 float* d_C;
 
 // Functions
 void RandomInit(float*, int);
 
 // Device code
-__global__ void VecDot(const float* A, const float* B, float* C, int N)
+__global__ void VecMin(const float* A, float* C, int N)
 {
     extern __shared__ float cache[];
 
     int i = blockDim.x * blockIdx.x + threadIdx.x;
     int cacheIndex = threadIdx.x;
 
-    float temp = 0.0;  // register for each thread
+    float temp = A[i];  // register for each thread
+    i += blockDim.x * gridDim.x;  // grid stride loop
     while (i < N) {
-        temp += A[i]*B[i];
+        if(temp > A[i])
+          temp = A[i];
         i += blockDim.x*gridDim.x;  
     }
    
@@ -44,7 +44,8 @@ __global__ void VecDot(const float* A, const float* B, float* C, int N)
     int ib = blockDim.x/2;
     while (ib != 0) {
       if(cacheIndex < ib)
-        cache[cacheIndex] += cache[cacheIndex + ib]; 
+        if(cache[cacheIndex] > cache[cacheIndex+ib])
+          cache[cacheIndex] = cache[cacheIndex+ib];
 
       __syncthreads();
 
@@ -61,7 +62,7 @@ __global__ void VecDot(const float* A, const float* B, float* C, int N)
 int main(void)
 {
 
-    int gid;
+    /*int gid;
 
     // Error code to check return values for CUDA calls
     cudaError_t err = cudaSuccess;
@@ -77,13 +78,13 @@ int main(void)
     printf("Set GPU with device ID = %d\n", gid);
 
     cudaSetDevice(gid);
-
+    */
     printf("Vector Dot Product: A.B\n");
     int N;
 
     printf("Enter the size of the vectors: ");
     scanf("%d",&N);        
-    printf("%d\n",N);        
+    printf("%d\n",N);
 
     // Set the sizes of threads and blocks
 
@@ -115,13 +116,11 @@ int main(void)
     int sb = blocksPerGrid * sizeof(float);
 
     h_A = (float*)malloc(size);
-    h_B = (float*)malloc(size);
-    h_C = (float*)malloc(sb);     // contains the result of dot-product from each block
+    h_C = (float*)malloc(sb);     // contains the result of min-value from each block
     
     // Initialize input vectors
 
     RandomInit(h_A, N);
-    RandomInit(h_B, N);
 
 
     // create the timer
@@ -135,13 +134,11 @@ int main(void)
     // Allocate vectors in device memory
 
     cudaMalloc((void**)&d_A, size);
-    cudaMalloc((void**)&d_B, size);
     cudaMalloc((void**)&d_C, sb);
 
     // Copy vectors from host memory to device memory
 
     cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_B, h_B, size, cudaMemcpyHostToDevice);
     
     // stop the timer
     cudaEventRecord(stop,0);
@@ -155,7 +152,7 @@ int main(void)
     cudaEventRecord(start,0);
 
     int sm = threadsPerBlock*sizeof(float);
-    VecDot <<< blocksPerGrid, threadsPerBlock, sm >>>(d_A, d_B, d_C, N);
+    VeciMin <<< blocksPerGrid, threadsPerBlock, sm >>>(d_A, d_C, N);
     
     // stop the timer
     cudaEventRecord(stop,0);
@@ -175,12 +172,12 @@ int main(void)
     cudaMemcpy(h_C, d_C, sb, cudaMemcpyDeviceToHost);
 
     cudaFree(d_A);
-    cudaFree(d_B);
     cudaFree(d_C);
 
-    double h_G=0.0;
-    for(int i = 0; i < blocksPerGrid; i++) 
-      h_G += (double) h_C[i];
+    double h_G=h_C[0];
+    for(int i = 1; i < blocksPerGrid; i++) 
+      if(h_G > h_C[i])
+        h_G = h_C[i];
     
 
     // stop the timer
@@ -200,9 +197,10 @@ int main(void)
 
     // to compute the reference solution
 
-    double h_D=0.0;       
+    double h_D = h_A[0];       
     for(int i = 0; i < N; i++) 
-      h_D += (double) h_A[i]*h_B[i];
+      if(h_D > h_A[i])
+        h_D = h_A[i]; 
     
     // stop the timer
     cudaEventRecord(stop,0);
@@ -228,7 +226,6 @@ int main(void)
     printf("\n");
 
     free(h_A);
-    free(h_B);
     free(h_C);
 
     cudaDeviceReset();
