@@ -60,7 +60,7 @@ __global__ void VecMin(const float* A, float* C, int N)
 int main(void)
 {
 
-    /*int gid;
+    int gid;
 
     // Error code to check return values for CUDA calls
     cudaError_t err = cudaSuccess;
@@ -76,7 +76,7 @@ int main(void)
     printf("Set GPU with device ID = %d\n", gid);
 
     cudaSetDevice(gid);
-    */
+    
     printf("Vector : A\n");
     int N;
 
