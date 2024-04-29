@@ -1,6 +1,7 @@
 // Vector Dot
 // using multiple GPUs with OpenMP
 
+
 // Includes
 #include <stdio.h>
 #include <stdlib.h>
