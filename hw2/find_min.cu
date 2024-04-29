@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 
+
 // CUDA kernel to find the minimum absolute value using parallel reduction
 __global__ void minAbsKernel(float *array, int n, float *minAbs) {
     extern __shared__ float sdata[];
