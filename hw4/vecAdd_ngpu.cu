@@ -16,7 +16,7 @@ float* h_C;
 void RandomInit(float*, int);
 
 // Device code
-__global__ void VecAdd(const float* A, const float* B, float* C, int N)
+__global__ void VecDot(const float* A, const float* B, float* C, int N)
 {
     extern __shared__ float cache[];
 
@@ -135,12 +135,12 @@ int main(void)
 	cudaSetDevice(Dev[cpu_thread_id]);
 //	cudaSetDevice(cpu_thread_id);
 
-        // start the timer
-        if(cpu_thread_id == 0) {
-          cudaEventCreate(&start);
-          cudaEventCreate(&stop);
-          cudaEventRecord(start,0);
-        }
+    // start the timer
+    if(cpu_thread_id == 0) {
+        cudaEventCreate(&start);
+        cudaEventCreate(&stop);
+        cudaEventRecord(start,0);
+    }
 
 	// Allocate vectors in device memory
 	cudaMalloc((void**)&d_A, size/NGPU);
