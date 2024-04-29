@@ -6,7 +6,6 @@
 // (for GTX1060)
 // nvcc -arch=compute_61 -code=sm_61,sm_61 -O3 -m64 -o laplace laplace.cu
 
-
 // Includes
 #include <stdio.h>
 #include <stdlib.h>
