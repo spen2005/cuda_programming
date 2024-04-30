@@ -4,7 +4,7 @@
 //
 //
 // (for GTX1060)
-// nvcc -arch=compute_61 -code=sm_61,sm_61 -O3 -m64 -o laplace laplace.cu
+// nvcc -arch=compute_61 -code=sm_61,sm_61 -O3 -m64 -o poisson poisson.cu
 
 // Includes
 #include <stdio.h>
