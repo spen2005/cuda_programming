@@ -131,72 +131,75 @@ int main(void)
 
     #pragma omp parallel private(cpu_thread_id)
     {
-	float *d_A, *d_B, *d_C;
-	cpu_thread_id = omp_get_thread_num();
-	cudaSetDevice(Dev[cpu_thread_id]);
-//	cudaSetDevice(cpu_thread_id);
+	    float *d_A, *d_B, *d_C;
+	    cpu_thread_id = omp_get_thread_num();
+	    cudaSetDevice(Dev[cpu_thread_id]);
 
-    // start the timer
-    if(cpu_thread_id == 0) {
-        cudaEventCreate(&start);
-        cudaEventCreate(&stop);
-        cudaEventRecord(start,0);
-    }
+        // start the timer
+        if(cpu_thread_id == 0) {
+            cudaEvent_t start, stop;
+            cudaEventCreate(&start);
+            cudaEventCreate(&stop);
+            cudaEventRecord(start, 0);
+        }
 
-	// Allocate vectors in device memory
-	cudaMalloc((void**)&d_A, size/NGPU);
-	cudaMalloc((void**)&d_B, size/NGPU);
-	cudaMalloc((void**)&d_C, sb/NGPU);
+	    // Allocate vectors in device memory
+	    cudaMalloc((void**)&d_A, size/NGPU);
+	    cudaMalloc((void**)&d_B, size/NGPU);
+	    cudaMalloc((void**)&d_C, sb/NGPU);
 
         // Copy vectors from host memory to device memory
-	cudaMemcpy(d_A, h_A+N/NGPU*cpu_thread_id, size/NGPU, cudaMemcpyHostToDevice);
-	cudaMemcpy(d_B, h_B+N/NGPU*cpu_thread_id, size/NGPU, cudaMemcpyHostToDevice);
-	#pragma omp barrier // wait for all threads to complete the data transfer
+	    cudaMemcpy(d_A, h_A+N/NGPU*cpu_thread_id, size/NGPU, cudaMemcpyHostToDevice);
+	    cudaMemcpy(d_B, h_B+N/NGPU*cpu_thread_id, size/NGPU, cudaMemcpyHostToDevice);
+	    #pragma omp barrier // wait for all threads to complete the data transfer
 
         // stop the timer
-	if(cpu_thread_id == 0) {
-          cudaEventRecord(stop,0);
-          cudaEventSynchronize(stop);
-          cudaEventElapsedTime( &Intime, start, stop);
-          printf("Data input time for GPU: %f (ms) \n",Intime);
-	}
+	    if(cpu_thread_id == 0) {
+            cudaEventRecord(stop, 0);
+            cudaEventSynchronize(stop);
+            cudaEventElapsedTime(&Intime, start, stop);
+            printf("Data input time for GPU: %f (ms)\n", Intime);
+	    }
 
-    // start the timer
-    if(cpu_thread_id == 0) cudaEventRecord(start,0);
+        // start the timer
+        if(cpu_thread_id == 0) {
+            cudaEventRecord(start, 0);
+        }
 
-    VecDot<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, N/NGPU);
-	cudaDeviceSynchronize();
+        VecDot<<<blocksPerGrid, threadsPerBlock, threadsPerBlock*sizeof(float)>>>(d_A, d_B, d_C, N/NGPU);
+	    cudaDeviceSynchronize();
 
         // stop the timer
+	    if(cpu_thread_id == 0) {
+            cudaEventRecord(stop, 0);
+            cudaEventSynchronize(stop);
+            cudaEventElapsedTime(&gputime, start, stop);
+            printf("Processing time for GPU: %f (ms)\n", gputime);
+            printf("GPU Gflops: %f\n", N/(1000000.0*gputime));
+	    }
 
-	if(cpu_thread_id == 0) {
-          cudaEventRecord(stop,0);
-          cudaEventSynchronize(stop);
-          cudaEventElapsedTime( &gputime, start, stop);
-          printf("Processing time for GPU: %f (ms) \n",gputime);
-          printf("GPU Gflops: %f\n",N/(1000000.0*gputime));
-	}
+        // Copy result from device memory to host memory
+        // h_C contains the result in host memory
 
-    // Copy result from device memory to host memory
-    // h_C contains the result in host memory
+        // start the timer
+        if(cpu_thread_id == 0) {
+            cudaEventRecord(start, 0);
+        }
 
-    // start the timer
-    if(cpu_thread_id == 0) cudaEventRecord(start,0);
+        cudaMemcpy(h_C+blocksPerGrid*cpu_thread_id, d_C, sb/NGPU, cudaMemcpyDeviceToHost);
+        cudaFree(d_A);
+        cudaFree(d_B);
+        cudaFree(d_C);
 
-    cudaMemcpy(h_C+blocksPerGrid*cpu_thread_id, d_C, sb/NGPU, cudaMemcpyDeviceToHost);
-    cudaFree(d_A);
-    cudaFree(d_B);
-    cudaFree(d_C);
-
-    // stop the timer
-
-	if(cpu_thread_id == 0) {
-          cudaEventRecord(stop,0);
-          cudaEventSynchronize(stop);
-          cudaEventElapsedTime( &Outime, start, stop);
-          printf("Data output time for GPU: %f (ms) \n",Outime);
-	}
+        // stop the timer
+	    if(cpu_thread_id == 0) {
+            cudaEventRecord(stop, 0);
+            cudaEventSynchronize(stop);
+            cudaEventElapsedTime(&Outime, start, stop);
+            printf("Data output time for GPU: %f (ms)\n", Outime);
+	    }
     } 
+
     double h_G = 0.0;
     for(int i = 0; i < blocksPerGrid*NGPU; i++) 
       h_G += (double) h_C[i];
