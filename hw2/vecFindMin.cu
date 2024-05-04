@@ -59,7 +59,7 @@ __global__ void VecMin(const float* A, float* C, int N)
 
 int main(void)
 {
-
+    printf("Vector find mininmum\n");
     int gid;
 
     // Error code to check return values for CUDA calls

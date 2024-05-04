@@ -24,7 +24,7 @@ request_cpus  = 2
 #--------------------------------------------------------------------------
 #       Change to the full path of the working directory
 #
-Initialdir = /home/cuda2024/twchiu/cuda_lecture/vecAdd_NGPU
+Initialdir = /home/cuda2024/B12902015/cuda_programming/hw4
 
 #--------------------------------------------------------------------------
 #       Modify the following line according to your needs.
@@ -36,7 +36,7 @@ Initialdir = /home/cuda2024/twchiu/cuda_lecture/vecAdd_NGPU
 #       Please note that, in the <input file>, the place to fill in the
 #       GPU ID should be a keyword "GPU_ID".
 #
-Arguments = ./vecAdd_ngpu Input_g2 Output_g2
+Arguments = ./vecDot_ngpu Input_g2 Output_g2
 #
 #
 #--------------------------------------------------------------------------

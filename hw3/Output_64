@@ -1,0 +1,67 @@
+Enter the GPU ID (0/1): 0
+Select GPU with device ID = 0
+Solve Poisson equation on a 3D lattice with boundary conditions
+Enter the size (Nx, Ny,Nz) of the 3D lattice: 64 64 64
+Enter the number of threads (tx,ty) per block: 8 8 8
+The dimension of the grid is (8, 8 , 8)
+To compute the solution vector with CPU/GPU/both (0/1/2) ? 2
+
+Input time for GPU: 0.705664 (ms) 
+error (GPU) = 0.000000000000000e+00
+total iterations (GPU) = 10050
+Processing time for GPU: 692.595825 (ms) 
+GPU Gflops: 0.390452
+Output time for GPU: 0.802016 (ms) 
+Total time for GPU: 694.103516 (ms) 
+
+error (CPU) = 9.036551890584976e-11
+total iterations (CPU) = 10472
+Processing time for CPU: 18713.226562 (ms) 
+CPU Gflops: 0.933585
+Speed up of GPU = 26.960281
+
+Enter the GPU ID (0/1): 0
+Select GPU with device ID = 0
+Solve Poisson equation on a 3D lattice with boundary conditions
+Enter the size (Nx, Ny,Nz) of the 3D lattice: 64 64 64
+Enter the number of threads (tx,ty) per block: 8 8 8
+The dimension of the grid is (8, 8 , 8)
+To compute the solution vector with CPU/GPU/both (0/1/2) ? 2
+
+Input time for GPU: 0.697024 (ms) 
+error (GPU) = 0.000000000000000e+00
+total iterations (GPU) = 10050
+Processing time for GPU: 691.383789 (ms) 
+GPU Gflops: 0.391136
+Output time for GPU: 0.736032 (ms) 
+Total time for GPU: 692.816833 (ms) 
+
+Final field configuration (GPU):
+1.57e-01 1.84e-01 2.12e-01 2.32e-01 2.32e-01 2.12e-01 1.84e-01 1.57e-01 
+1.84e-01 2.28e-01 2.81e-01 3.30e-01 3.30e-01 2.81e-01 2.28e-01 1.84e-01 
+2.12e-01 2.81e-01 3.86e-01 5.25e-01 5.25e-01 3.86e-01 2.81e-01 2.12e-01 
+2.32e-01 3.30e-01 5.25e-01 1.00e+00 1.00e+00 5.25e-01 3.30e-01 2.32e-01 
+2.32e-01 3.30e-01 5.25e-01 1.00e+00 1.00e+00 5.25e-01 3.30e-01 2.32e-01 
+2.12e-01 2.81e-01 3.86e-01 5.25e-01 5.25e-01 3.86e-01 2.81e-01 2.12e-01 
+1.84e-01 2.28e-01 2.81e-01 3.30e-01 3.30e-01 2.81e-01 2.28e-01 1.84e-01 
+1.57e-01 1.84e-01 2.12e-01 2.32e-01 2.32e-01 2.12e-01 1.84e-01 1.57e-01 
+
+
+
+error (CPU) = 9.036551890584976e-11
+total iterations (CPU) = 10472
+Processing time for CPU: 18798.205078 (ms) 
+CPU Gflops: 0.929365
+Speed up of GPU = 27.133009
+
+Final field configuration (CPU):
+1.57e-01 1.84e-01 2.12e-01 2.32e-01 2.32e-01 2.12e-01 1.84e-01 1.57e-01 
+1.84e-01 2.28e-01 2.81e-01 3.30e-01 3.30e-01 2.81e-01 2.28e-01 1.84e-01 
+2.12e-01 2.81e-01 3.86e-01 5.25e-01 5.25e-01 3.86e-01 2.81e-01 2.12e-01 
+2.32e-01 3.30e-01 5.25e-01 1.00e+00 1.00e+00 5.25e-01 3.30e-01 2.32e-01 
+2.32e-01 3.30e-01 5.25e-01 1.00e+00 1.00e+00 5.25e-01 3.30e-01 2.32e-01 
+2.12e-01 2.81e-01 3.86e-01 5.25e-01 5.25e-01 3.86e-01 2.81e-01 2.12e-01 
+1.84e-01 2.28e-01 2.81e-01 3.30e-01 3.30e-01 2.81e-01 2.28e-01 1.84e-01 
+1.57e-01 1.84e-01 2.12e-01 2.32e-01 2.32e-01 2.12e-01 1.84e-01 1.57e-01 
+
+

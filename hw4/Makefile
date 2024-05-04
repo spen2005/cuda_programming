@@ -12,8 +12,8 @@ NVCC    := nvcc
 CUFLAGS := -arch=compute_61 -code=sm_61,sm_61 -O3 --compiler-options -fopenmp
 #CUFLAGS := -O3 --compiler-options -fopenmp
 
-BIN     := vecAdd_ngpu
-OBJ     := vecAdd_ngpu.o
+BIN     := vecDot_ngpu
+OBJ     := vecDot_ngpu.o
 LIB     :=
 
 %.o: %.cu
@@ -27,7 +27,7 @@ $(BIN): $(OBJ)
 #	$(NVCC) -Xcompiler -fopenmp -o $(BIN) $(CUFLAGS) $(OBJ) $(LIB)
 	$(NVCC) -o $(BIN) $(CUFLAGS) $(OBJ) $(LIB)
 
-vecAdd_ngpu.o:  vecAdd_ngpu.cu
+vecAdd_ngpu.o:  vecDot_ngpu.cu
 
 clean:
 	rm -f $(OBJ) $(BIN)

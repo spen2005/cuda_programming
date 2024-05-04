@@ -1,95 +1,40 @@
+Vector find mininmum
 Enter the GPU ID: 0
 Set GPU with device ID = 0
-Vector Dot Product: A.B
-Enter the size of the vectors: 268435456
-Enter the number (2^m) of threads per block: 1024
-Enter the number of blocks per grid: 256
-Input time for GPU: 300.640015 (ms) 
-Processing time for GPU: 13.085888 (ms) 
-GPU Gflops: 41.026709
-Output time for GPU: 10.436960 (ms) 
-Total time for GPU: 324.162842 (ms) 
-Processing time for CPU: 265.714325 (ms) 
-CPU Gflops: 2.020482
-Speed up of GPU = 0.819694
-Check result:
-|(h_G - h_D)/h_D|=4.633873791246067e-07
-h_G =-3.163523506164551e+03
-h_D =-3.163524972102096e+03
-
-Enter the GPU ID: 0
-Set GPU with device ID = 0
-Vector Dot Product: A.B
-Enter the size of the vectors: 268435456
-Enter the number (2^m) of threads per block: 512
-Enter the number of blocks per grid: 256
-Input time for GPU: 298.520569 (ms) 
-Processing time for GPU: 13.290176 (ms) 
-GPU Gflops: 40.396071
-Output time for GPU: 10.435648 (ms) 
-Total time for GPU: 322.246368 (ms) 
-Processing time for CPU: 266.127502 (ms) 
-CPU Gflops: 2.017345
-Speed up of GPU = 0.825851
-Check result:
-|(h_G - h_D)/h_D|=5.404723980664684e-07
-h_G =-3.163526681900024e+03
-h_D =-3.163524972102096e+03
-
-Enter the GPU ID: 0
-Set GPU with device ID = 0
-Vector Dot Product: A.B
-Enter the size of the vectors: 268435456
-Enter the number (2^m) of threads per block: 256
-Enter the number of blocks per grid: 1024
-Input time for GPU: 306.929199 (ms) 
-Processing time for GPU: 13.197056 (ms) 
-GPU Gflops: 40.681112
-Output time for GPU: 10.436768 (ms) 
-Total time for GPU: 330.563019 (ms) 
-Processing time for CPU: 265.465942 (ms) 
-CPU Gflops: 2.022372
-Speed up of GPU = 0.803072
-Check result:
-|(h_G - h_D)/h_D|=6.623505782075224e-07
-h_G =-3.163522876739502e+03
-h_D =-3.163524972102096e+03
-
-Enter the GPU ID: 0
-Set GPU with device ID = 0
-Vector Dot Product: A.B
-Enter the size of the vectors: 268435456
-Enter the number (2^m) of threads per block: 128
-Enter the number of blocks per grid: 256
-Input time for GPU: 299.267395 (ms) 
-Processing time for GPU: 13.389824 (ms) 
-GPU Gflops: 40.095442
-Output time for GPU: 10.435104 (ms) 
-Total time for GPU: 323.092346 (ms) 
-Processing time for CPU: 266.125916 (ms) 
-CPU Gflops: 2.017357
-Speed up of GPU = 0.823684
-Check result:
-|(h_G - h_D)/h_D|=2.757427308401652e-09
-h_G =-3.163524963378906e+03
-h_D =-3.163524972102096e+03
-
-Enter the GPU ID: 0
-Set GPU with device ID = 0
-Vector Dot Product: A.B
+Vector : A
 Enter the size of the vectors: 268435456
 Enter the number (2^m) of threads per block: 64
 Enter the number of blocks per grid: 256
-Input time for GPU: 307.005432 (ms) 
-Processing time for GPU: 13.214592 (ms) 
-GPU Gflops: 40.627127
-Output time for GPU: 10.420608 (ms) 
-Total time for GPU: 330.640625 (ms) 
-Processing time for CPU: 266.142761 (ms) 
-CPU Gflops: 2.017229
-Speed up of GPU = 0.804931
+Input time for GPU: 155.740860 (ms) 
+Processing time for GPU: 7.636864 (ms) 
+GPU Gflops: 70.299916
+Output time for GPU: 5.542048 (ms) 
+Total time for GPU: 168.919785 (ms) 
+Processing time for CPU: 212.248444 (ms) 
+CPU Gflops: 2.529446
+Speed up of GPU = 1.256504
 Check result:
-|(h_G - h_D)/h_D|=2.330538271027611e-06
-h_G =-3.163532344818115e+03
-h_D =-3.163524972102096e+03
+|(h_G - h_D)/h_D|=0.000000000000000e+00
+h_G =1.862645149230957e-09
+h_D =1.862645149230957e-09
+
+Vector find mininmum
+Enter the GPU ID: 0
+Set GPU with device ID = 0
+Vector : A
+Enter the size of the vectors: 268435456
+Enter the number (2^m) of threads per block: 64
+Enter the number of blocks per grid: 256
+Input time for GPU: 151.536346 (ms) 
+Processing time for GPU: 7.511936 (ms) 
+GPU Gflops: 71.469046
+Output time for GPU: 4.183616 (ms) 
+Total time for GPU: 163.231888 (ms) 
+Processing time for CPU: 212.329636 (ms) 
+CPU Gflops: 2.528478
+Speed up of GPU = 1.300785
+Check result:
+|(h_G - h_D)/h_D|=0.000000000000000e+00
+h_G =1.862645149230957e-09
+h_D =1.862645149230957e-09
 

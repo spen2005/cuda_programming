@@ -19,7 +19,7 @@ float* d_new;   // device field vectors
 float* d_old;  
 float* d_C;
 
-int     MAX=10000;     // maximum iterations
+int     MAX=100000;     // maximum iterations
 double  eps=1.0e-10;      // stopping criterion
 
 
@@ -49,33 +49,34 @@ __global__ void poisson(float* phi_old, float* phi_new, float* C, bool flag)
         diff = 0.0;
     }
     else {
-        xm1 = site - 1;    // x-1
-        xp1 = site + 1;    // x+1
-        ym1 = site - Nx;   // y-1
-        yp1 = site + Nx;   // y+1
-        zm1 = site - Nx*Ny;   // z-1
-        zp1 = site + Nx*Ny;   // z+1
-        if(flag){
-          l = phi_old[xm1];
-          r = phi_old[xp1];
-          u = phi_old[yp1];
-          d = phi_old[ym1];
-          f = phi_old[zp1];
-          b = phi_old[zm1];
-          // 1/6(l+r+u+d+f+b)
-          phi_new[site] = 0.166*(l+r+u+d+f+b);
-        }
-        else{
-          l = phi_new[xm1];
-          r = phi_new[xp1];
-          u = phi_new[yp1];
-          d = phi_new[ym1];
-          f = phi_new[zp1];
-          b = phi_new[zm1];
-          // 1/6(l+r+u+d+f+b)
-          phi_old[site] = 0.166*(l+r+u+d+f+b);
-        }
-        diff = phi_new[site]-phi_old[site];
+        	xm1 = site - 1;    // x-1
+        	xp1 = site + 1;    // x+1
+        	ym1 = site - Nx;   // y-1
+        	yp1 = site + Nx;   // y+1
+        	zm1 = site - Nx*Ny;   // z-1
+        	zp1 = site + Nx*Ny;   // z+1
+        	if(flag){
+          		l = phi_old[xm1];
+          		r = phi_old[xp1];
+          		u = phi_old[yp1];
+          		d = phi_old[ym1];
+          		f = phi_old[zp1];
+          		b = phi_old[zm1];
+          		// 1/6(l+r+u+d+f+b)
+          		phi_new[site] = (l+r+u+d+f+b)/6.0;
+			diff = phi_new[site] - phi_old[site];
+        	}
+        	else{
+          		l = phi_new[xm1];
+          		r = phi_new[xp1];
+          		u = phi_new[yp1];
+          		d = phi_new[ym1];
+          		f = phi_new[zp1];
+          		b = phi_new[zm1];
+          		// 1/6(l+r+u+d+f+b)
+          		phi_old[site] = (l+r+u+d+f+b)/6.0;
+			diff = phi_old[site] - phi_new[site];
+        	}
     }
     
     cache[cacheIndex]=diff*diff;
@@ -211,6 +212,10 @@ int main(void)
         h_old[i] = 1.0;
 	h_new[i] = 1.0;
       }
+      else{
+      	h_old[i] = 0.0;
+	h_new[i] = 0.0;	
+      }
     }
 
     FILE *out1;                 // save initial configuration in phi_initial.dat
@@ -285,11 +290,8 @@ int main(void)
           error = error + h_C[i];
         }
         error = sqrt(error);
-	if(iter % 10 == 0)
-		printf("error: %.15e iter: %d \n",error,iter);
         iter++;
         flag = !flag;
-
       }
 
       printf("error (GPU) = %.15e\n",error);
@@ -342,16 +344,19 @@ int main(void)
       }
       fclose(outg);
 
-//      printf("\n");
-//      printf("Final field configuration (GPU):\n");
-//      for(int j=Ny-1;j>-1;j--) {
-//        for(int i=0; i<Nx; i++) {
-//          printf("%.2e ",g_new[i+j*Nx]);
-//        }
-//        printf("\n");
-//      }
+	printf("\n");
+	printf("Final field configuration (GPU):\n");
+	for(int i=Nx/2 ; i<=Nx/2 ; i++) {
+		for(int j=Ny/2-4; j<Ny/2+4 ; j++) {
+			for(int k=Nz/2-4; k<Nz/2+4 ; k++){
+				printf("%.2e ",g_new[i+j*Nx+k*Nx*Ny]);
+			}
+			printf("\n");
+		}
+		printf("\n");
+	}
 
-      printf("\n");
+      printf("\n\n");
 
     } 
 
@@ -404,7 +409,7 @@ int main(void)
             u = h_old[yp1];
             f = h_old[zp1];
             d = h_old[ym1];
-            h_new[site] = 0.166*(b+l+r+u+f+d);
+            h_new[site] = (b+l+r+u+f+d)/6.0;
             diff = h_new[site]-h_old[site];
             error = error + diff*diff;
 	    //if(iter == 13 || iter == 12 )printf("iter %d x %d ,y %d ,z %d diff %.15ef\n",iter,x,y,z,h_new[site]);
@@ -437,7 +442,7 @@ int main(void)
             u = h_new[yp1];
             f = h_new[zp1];
             d = h_new[ym1];
-            h_old[site] = 0.166*(b+l+r+u+f+d);
+            h_old[site] = (b+l+r+u+f+d)/6.0;
             diff = h_old[site]-h_new[site];
             error = error + diff*diff;
 	    //if(iter == 13 || iter == 11 )printf("iter %d x %d ,y %d ,z %d diff %.15ef \n",iter,x,y,z,h_old[site]);	  
@@ -447,8 +452,6 @@ int main(void)
         }
         flag = !flag;
         error = sqrt(error);
-	if(iter % 10 == 0)
-		printf("error: %.15e iter: %d\n ",error,iter);
 	iter++;
 //        printf("error = %.15e\n",error);
 //        printf("iteration = %d\n",iter);
@@ -491,14 +494,17 @@ int main(void)
       }
       fclose(outc);
 
- //     printf("\n");
- //     printf("Final field configuration (CPU):\n");
- //     for(int j=Ny-1;j>-1;j--) {
- //       for(int i=0; i<Nx; i++) {
- //         printf("%.2e ",h_new[i+j*Nx]);
- //       }
- //       printf("\n");
- //     }
+      printf("\n");
+      printf("Final field configuration (CPU):\n");
+      for(int i=Nx/2 ; i<=Nx/2 ; i++) {
+        for(int j=Ny/2-4; j<Ny/2+4 ; j++) {
+		for(int k=Nz/2-4; k<Nz/2+4 ; k++){
+          		printf("%.2e ",h_new[i+j*Nx+k*Nx*Ny]);
+		}
+		printf("\n");
+        }
+        printf("\n");
+      }
 
       printf("\n");
 

@@ -6,40 +6,62 @@ Enter the number of threads (tx,ty) per block: 8 8 8
 The dimension of the grid is (1, 1 , 1)
 To compute the solution vector with CPU/GPU/both (0/1/2) ? 2
 
-Input time for GPU: 0.138240 (ms) 
-error: 8.132305528887822e-01 iter: 0 
-error: 6.281438376320653e-02 iter: 10 
-error: 1.117468473370401e-02 iter: 20 
-error: 1.988441823815713e-03 iter: 30 
-error: 3.537690877120664e-04 iter: 40 
-error: 6.301182202403394e-05 iter: 50 
-error: 1.120125537621082e-05 iter: 60 
-error: 1.976586866377908e-06 iter: 70 
-error: 4.060822744547653e-07 iter: 80 
-error: 1.331237583250227e-07 iter: 90 
-error: 0.000000000000000e+00 iter: 100 
+Input time for GPU: 0.123072 (ms) 
 error (GPU) = 0.000000000000000e+00
-total iterations (GPU) = 101
-Processing time for GPU: 1.870752 (ms) 
-GPU Gflops: 0.013605
-Output time for GPU: 0.094400 (ms) 
-Total time for GPU: 2.103392 (ms) 
+total iterations (GPU) = 102
+Processing time for GPU: 1.907328 (ms) 
+GPU Gflops: 0.013476
+Output time for GPU: 0.095264 (ms) 
+Total time for GPU: 2.125664 (ms) 
 
-error: 8.132305636518103e-01 iter: 0
- error: 6.281441012000075e-02 iter: 10
- error: 1.117464449615325e-02 iter: 20
- error: 1.988471937276610e-03 iter: 30
- error: 3.537668726845258e-04 iter: 40
- error: 6.301895808965110e-05 iter: 50
- error: 1.118635903025328e-05 iter: 60
- error: 2.001614805342127e-06 iter: 70
- error: 4.286755501042428e-07 iter: 80
- error: 8.000705985320557e-08 iter: 90
- error: 3.616602688831761e-08 iter: 100
- error: 0.000000000000000e+00 iter: 110
- error (CPU) = 0.000000000000000e+00
+error (CPU) = 0.000000000000000e+00
 total iterations (CPU) = 111
-Processing time for CPU: 0.113856 (ms) 
-CPU Gflops: 1.474072
-Speed up of GPU = 0.054130
+Processing time for CPU: 0.110208 (ms) 
+CPU Gflops: 1.522866
+Speed up of GPU = 0.051846
+
+Enter the GPU ID (0/1): 0
+Select GPU with device ID = 0
+Solve Poisson equation on a 3D lattice with boundary conditions
+Enter the size (Nx, Ny,Nz) of the 3D lattice: 8 8 8
+Enter the number of threads (tx,ty) per block: 8 8 8
+The dimension of the grid is (1, 1 , 1)
+To compute the solution vector with CPU/GPU/both (0/1/2) ? 2
+
+Input time for GPU: 0.122688 (ms) 
+error (GPU) = 0.000000000000000e+00
+total iterations (GPU) = 102
+Processing time for GPU: 1.887552 (ms) 
+GPU Gflops: 0.013618
+Output time for GPU: 0.093312 (ms) 
+Total time for GPU: 2.103552 (ms) 
+
+Final field configuration (GPU):
+0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 
+0.00e+00 4.66e-02 9.96e-02 1.51e-01 1.51e-01 9.96e-02 4.66e-02 0.00e+00 
+0.00e+00 9.96e-02 2.31e-01 4.03e-01 4.03e-01 2.31e-01 9.96e-02 0.00e+00 
+0.00e+00 1.51e-01 4.03e-01 1.00e+00 1.00e+00 4.03e-01 1.51e-01 0.00e+00 
+0.00e+00 1.51e-01 4.03e-01 1.00e+00 1.00e+00 4.03e-01 1.51e-01 0.00e+00 
+0.00e+00 9.96e-02 2.31e-01 4.03e-01 4.03e-01 2.31e-01 9.96e-02 0.00e+00 
+0.00e+00 4.66e-02 9.96e-02 1.51e-01 1.51e-01 9.96e-02 4.66e-02 0.00e+00 
+0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 
+
+
+
+error (CPU) = 0.000000000000000e+00
+total iterations (CPU) = 109
+Processing time for CPU: 0.097984 (ms) 
+CPU Gflops: 1.681989
+Speed up of GPU = 0.046580
+
+Final field configuration (CPU):
+0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 
+0.00e+00 4.66e-02 9.96e-02 1.51e-01 1.51e-01 9.96e-02 4.66e-02 0.00e+00 
+0.00e+00 9.96e-02 2.31e-01 4.03e-01 4.03e-01 2.31e-01 9.96e-02 0.00e+00 
+0.00e+00 1.51e-01 4.03e-01 1.00e+00 1.00e+00 4.03e-01 1.51e-01 0.00e+00 
+0.00e+00 1.51e-01 4.03e-01 1.00e+00 1.00e+00 4.03e-01 1.51e-01 0.00e+00 
+0.00e+00 9.96e-02 2.31e-01 4.03e-01 4.03e-01 2.31e-01 9.96e-02 0.00e+00 
+0.00e+00 4.66e-02 9.96e-02 1.51e-01 1.51e-01 9.96e-02 4.66e-02 0.00e+00 
+0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 
+
 
