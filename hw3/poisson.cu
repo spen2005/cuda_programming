@@ -19,14 +19,14 @@ float* d_new;   // device field vectors
 float* d_old;  
 float* d_C;
 
-int     MAX=10000000;     // maximum iterations
+int     MAX=10000;     // maximum iterations
 double  eps=1.0e-10;      // stopping criterion
 
 
 __global__ void poisson(float* phi_old, float* phi_new, float* C, bool flag)
 {
     extern __shared__ float cache[];     
-    float  l,r,u,d,f,b    // up, left, right, down ,front , back
+    float  l,r,u,d,f,b;    // up, left, right, down ,front , back
     float  diff; 
     int    site, xm1 , ym1 , zm1 , xp1 , yp1 , zp1;
 
@@ -41,9 +41,9 @@ __global__ void poisson(float* phi_old, float* phi_new, float* C, bool flag)
     site = x + y*Nx + z*Nx*Ny;
 
     int pos_x,pos_y,pos_z;
-    pos_z = site/(L*L);
-    pos_y = (site-pos_z*L*L)/L;
-    pos_x = site-pos_z*L*L-pos_y*L;
+    pos_z = site/(Nx*Ny);
+    pos_y = (site-pos_z*Nx*Ny)/Nx;
+    pos_x = site-pos_z*Nx*Ny-pos_y*Nx;
 
     if(((pos_x == Nx/2 || pos_x == Nx/2-1 ) && (pos_y == Ny/2 || pos_y == Ny/2-1 ) && (pos_z == Nz/2 || pos_z == Nz/2-1 ))|| pos_x==0 || pos_x==Nx-1 || pos_y==0 || pos_y==Ny-1 || pos_z==0 || pos_z==Nz-1) {
         diff = 0.0;
@@ -51,10 +51,10 @@ __global__ void poisson(float* phi_old, float* phi_new, float* C, bool flag)
     else {
         xm1 = site - 1;    // x-1
         xp1 = site + 1;    // x+1
-        ym1 = site - L;   // y-1
-        yp1 = site + L;   // y+1
-        zm1 = site - L*L;   // z-1
-        zp1 = site + L*L;   // z+1
+        ym1 = site - Nx;   // y-1
+        yp1 = site + Nx;   // y+1
+        zm1 = site - Nx*Ny;   // z-1
+        zp1 = site + Nx*Ny;   // z+1
         if(flag){
           l = phi_old[xm1];
           r = phi_old[xp1];
@@ -204,11 +204,12 @@ int main(void)
 
     int pos_x,pos_y,pos_z;
     for(int i=0; i<N; i++) {
-      pos_z = i/(L*L);
-      pos_y = (i-pos_z*L*L)/L;
-      pos_x = i-pos_z*L*L-pos_y*L;
+      pos_z = i/(Nx*Ny);
+      pos_y = (i-pos_z*Nx*Ny)/Nx;
+      pos_x = i-pos_z*Nx*Ny-pos_y*Nx;
       if((pos_x == Nx/2 || pos_x == Nx/2-1 ) && (pos_y == Ny/2 || pos_y == Ny/2-1 ) && (pos_z == Nz/2 || pos_z == Nz/2-1 )) {
         h_old[i] = 1.0;
+	h_new[i] = 1.0;
       }
     }
 
@@ -277,18 +278,15 @@ int main(void)
       int sm = tx*ty*tz*sizeof(float);
 
       while ( (error > eps) && (iter < MAX) ) {
-
-        laplacian<<<blocks,threads,sm>>>(d_old, d_new, d_C, flag);
+        poisson<<<blocks,threads,sm>>>(d_old, d_new, d_C, flag);
         cudaMemcpy(h_C, d_C, sb, cudaMemcpyDeviceToHost);
         error = 0.0;
         for(int i=0; i<bx*by*bz; i++) {
           error = error + h_C[i];
         }
         error = sqrt(error);
-
-//        printf("error = %.15e\n",error);
-//        printf("iteration = %d\n",iter);
-
+	if(iter % 10 == 0)
+		printf("error: %.15e iter: %d \n",error,iter);
         iter++;
         flag = !flag;
 
@@ -378,9 +376,8 @@ int main(void)
       flag = true;     
       double diff; 
 
-      float  l,r,u,d,f,b    // up, left, right, down ,front , back
+      float  l,r,u,d,f,b;    // up, left, right, down ,front , back
       int site, xm1 , ym1 , zm1 , xp1 , yp1 , zp1;
-
       while ( (error > eps) && (iter < MAX) ) {
         if(flag) {
           error = 0.0;
@@ -401,17 +398,18 @@ int main(void)
             yp1 = site + Nx;   // y+1
             zm1 = site - Nx*Ny;   // z-1
             zp1 = site + Nx*Ny;   // z+1
-            b = h_new[zm1]; 
-            l = h_new[xm1]; 
-            r = h_new[xp1]; 
-            u = h_new[yp1]; 
-            f = h_new[zp1]; 
-            d = h_new[ym1]; 
+            b = h_old[zm1];
+            l = h_old[xm1];
+            r = h_old[xp1];
+            u = h_old[yp1];
+            f = h_old[zp1];
+            d = h_old[ym1];
             h_new[site] = 0.166*(b+l+r+u+f+d);
-            diff = h_new[site]-h_old[site]; 
+            diff = h_new[site]-h_old[site];
             error = error + diff*diff;
+	    //if(iter == 13 || iter == 12 )printf("iter %d x %d ,y %d ,z %d diff %.15ef\n",iter,x,y,z,h_new[site]);
           }
-          }
+	  }
           }
         }
         else {
@@ -433,23 +431,25 @@ int main(void)
             yp1 = site + Nx;   // y+1
             zm1 = site - Nx*Ny;   // z-1
             zp1 = site + Nx*Ny;   // z+1
-            b = h_old[zm1]; 
-            l = h_old[xm1]; 
-            r = h_old[xp1]; 
-            u = h_old[yp1]; 
-            f = h_old[zp1]; 
-            d = h_old[ym1]; 
+            b = h_new[zm1];
+            l = h_new[xm1];
+            r = h_new[xp1];
+            u = h_new[yp1];
+            f = h_new[zp1];
+            d = h_new[ym1];
             h_old[site] = 0.166*(b+l+r+u+f+d);
-            diff = h_old[site]-h_new[site]; 
+            diff = h_old[site]-h_new[site];
             error = error + diff*diff;
-          }
+	    //if(iter == 13 || iter == 11 )printf("iter %d x %d ,y %d ,z %d diff %.15ef \n",iter,x,y,z,h_old[site]);	  
+	  }
           }
           }
         }
         flag = !flag;
-        iter++;
         error = sqrt(error);
-
+	if(iter % 10 == 0)
+		printf("error: %.15e iter: %d\n ",error,iter);
+	iter++;
 //        printf("error = %.15e\n",error);
 //        printf("iteration = %d\n",iter);
 

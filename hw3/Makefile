@@ -10,7 +10,6 @@ NVFLAGS := -O3 -I$(CUDIR)/include -m64 -arch=compute_61 -code=sm_61,sm_61 -Xptxa
 BIN     := poisson
 LIB     :=
 
-all: $(BIN)
 
 $(BIN): poisson.cu
 	$(NVCC) -o $(BIN) $(NVFLAGS) poisson.cu $(LIB)

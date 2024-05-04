@@ -35,10 +35,10 @@ Initialdir = /home/cuda2024/B12902015/cuda_programming/hw3
 #       Please note that, in the <input file>, the place to fill in the
 #       GPU ID should be a keyword "GPU_ID".
 #
-#Arguments = ./poisson Input Output
+Arguments = ./poisson Input Output
 #Arguments = ./poisson Input_16 Output_16
-Arguments = ./poisson Input_32 Output_32
-Arguments = ./poisson Input_64 Output_64
+#Arguments = ./poisson Input_32 Output_32
+#Arguments = ./poisson Input_64 Output_64
 
 #
 #--------------------------------------------------------------------------
