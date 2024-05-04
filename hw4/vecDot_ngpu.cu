@@ -1,7 +1,6 @@
 // Vector Dot
 // using multiple GPUs with OpenMP
 
-
 // Includes
 #include <stdio.h>
 #include <stdlib.h>
@@ -120,27 +119,22 @@ int main(void)
     RandomInit(h_A, N);
     RandomInit(h_B, N);
 
-    // declare cuda event for timer
-    cudaEvent_t start, stop;
-//    cudaEventCreate(&start);    // events must be created after devices are set 
-//    cudaEventCreate(&stop);
-
-    float Intime,gputime,Outime;
+    float Intime, gputime, Outime;
 
     omp_set_num_threads(NGPU);
 
-    #pragma omp parallel private(cpu_thread_id)
+    #pragma omp parallel private(cpu_thread_id, Intime, gputime, Outime)
     {
+        cudaEvent_t start, stop; // Declare start and stop events
 	    float *d_A, *d_B, *d_C;
 	    cpu_thread_id = omp_get_thread_num();
 	    cudaSetDevice(Dev[cpu_thread_id]);
 
         // start the timer
         if(cpu_thread_id == 0) {
-            cudaEvent_t start, stop;
-            cudaEventCreate(&start);
-            cudaEventCreate(&stop);
-            cudaEventRecord(start, 0);
+            cudaEventCreate(&start); // Create start event
+            cudaEventCreate(&stop); // Create stop event
+            cudaEventRecord(start, 0); // Record start event
         }
 
 	    // Allocate vectors in device memory
@@ -155,15 +149,15 @@ int main(void)
 
         // stop the timer
 	    if(cpu_thread_id == 0) {
-            cudaEventRecord(stop, 0);
-            cudaEventSynchronize(stop);
-            cudaEventElapsedTime(&Intime, start, stop);
+            cudaEventRecord(stop, 0); // Record stop event
+            cudaEventSynchronize(stop); // Synchronize stop event
+            cudaEventElapsedTime(&Intime, start, stop); // Calculate elapsed time
             printf("Data input time for GPU: %f (ms)\n", Intime);
 	    }
 
         // start the timer
         if(cpu_thread_id == 0) {
-            cudaEventRecord(start, 0);
+            cudaEventRecord(start, 0); // Record start event
         }
 
         VecDot<<<blocksPerGrid, threadsPerBlock, threadsPerBlock*sizeof(float)>>>(d_A, d_B, d_C, N/NGPU);
@@ -171,9 +165,9 @@ int main(void)
 
         // stop the timer
 	    if(cpu_thread_id == 0) {
-            cudaEventRecord(stop, 0);
-            cudaEventSynchronize(stop);
-            cudaEventElapsedTime(&gputime, start, stop);
+            cudaEventRecord(stop, 0); // Record stop event
+            cudaEventSynchronize(stop); // Synchronize stop event
+            cudaEventElapsedTime(&gputime, start, stop); // Calculate elapsed time
             printf("Processing time for GPU: %f (ms)\n", gputime);
             printf("GPU Gflops: %f\n", N/(1000000.0*gputime));
 	    }
@@ -183,7 +177,7 @@ int main(void)
 
         // start the timer
         if(cpu_thread_id == 0) {
-            cudaEventRecord(start, 0);
+            cudaEventRecord(start, 0); // Record start event
         }
 
         cudaMemcpy(h_C+blocksPerGrid*cpu_thread_id, d_C, sb/NGPU, cudaMemcpyDeviceToHost);
@@ -193,10 +187,11 @@ int main(void)
 
         // stop the timer
 	    if(cpu_thread_id == 0) {
-            cudaEventRecord(stop, 0);
-            cudaEventSynchronize(stop);
-            cudaEventElapsedTime(&Outime, start, stop);
+            cudaEventRecord(stop, 0); // Record stop event
+            cudaEventSynchronize(stop); // Synchronize stop event
+            cudaEventElapsedTime(&Outime, start, stop); // Calculate elapsed time
             printf("Data output time for GPU: %f (ms)\n", Outime);
+	    printf("Total time for GPU: %f (ms) \n",Intime+Outime+gputime); 
 	    }
     } 
 
@@ -204,33 +199,35 @@ int main(void)
     for(int i = 0; i < blocksPerGrid*NGPU; i++) 
       h_G += (double) h_C[i];
 
+    
 
-    float gputime_tot;
-    gputime_tot = Intime + gputime + Outime;
-    printf("Total time for GPU: %f (ms) \n",gputime_tot);
-
+    cudaEvent_t cpu_start, cpu_stop;
+    cudaEventCreate(&cpu_start);
+    cudaEventCreate(&cpu_stop);
     // start the timer
-    cudaEventRecord(start,0);
+    cudaEventRecord(cpu_start,0);
 
     // to compute the reference solution
-
+    
     double h_D=0.0;       
     for(int i = 0; i < N; i++) 
       h_D += (double) h_A[i]*h_B[i];
     
+
     // stop the timer
-    cudaEventRecord(stop,0);
-    cudaEventSynchronize(stop);
+    cudaEventRecord(cpu_stop,0);
+    cudaEventSynchronize(cpu_stop);
+	    float cpu_time;
+    cudaEventElapsedTime(&cpu_time,cpu_start,cpu_stop);
 
-    float cputime;
-    cudaEventElapsedTime( &cputime, start, stop);
-    printf("Processing time for CPU: %f (ms) \n",cputime);
-    printf("CPU Gflops: %f\n",2*N/(1000000.0*cputime));
-    printf("Speed up of GPU = %f\n", cputime/(gputime_tot));
+    printf("Processing time for CPU: %f (ms) \n",cpu_time);
+    printf("CPU Gflops: N/A\n");
+    printf("Speed up of GPU = N/A\n");
 
+    
     // destroy the timer
-    cudaEventDestroy(start);
-    cudaEventDestroy(stop);
+    cudaEventDestroy(cpu_start);
+    cudaEventDestroy(cpu_stop);    
 
     // check result
 
@@ -253,10 +250,10 @@ int main(void)
     return 0;
 }
 
-
 // Allocates an array with random float entries.
 void RandomInit(float* data, int n)
 {
     for (int i = 0; i < n; ++i)
         data[i] = rand() / (float)RAND_MAX;
 }
+
